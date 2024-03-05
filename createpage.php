@@ -62,12 +62,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </li>
             </ul>
         </div>
+
+        <div class="d-inline-flex">
+            <div><span class="navbar-text fs-2  px-3 text-primary"><?php echo $_COOKIE['nickname_cookie']; ?></span></div>
+            <div>
+                <form class="fs-2 px-3" action="logout.php" method="POST">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            </div>
     </nav>
 
     <!-- create chatgroup form -->
     <div class="container">
         <h1>Create New ChatRoom！</h1>
-        <form action="createpage.php"  method="post">
+        <form action="createpage.php" method="post">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label fs-3">Title</label>
                 <input type="title" class="form-control" id="title" name="title">
