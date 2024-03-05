@@ -35,13 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $current_row_password = $row['password'];
  
         if (password_verify($password, $current_row_password)) {
+            if (!empty($_POST['rememberme'])){
             // Set the cookie with the username and hashed password
             setcookie('username_cookie', $row['username'], time() + 3600, '/');
             setcookie('password_cookie', $row['password'], time() + 3600, '/');
             setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/');
+            } 
             $_SESSION['username'] = $row['nickname'];
             header("Location: index.php");
             exit();
+        
         } else {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                <strong>Warning!</strong> Invalid login ID or password! Please try again!
