@@ -1,0 +1,54 @@
+.message-container {
+  border: 2px solid black;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.left-block {
+  flex: 1;
+  
+}
+
+.middle-block {
+  width: 100%;
+  height: 100%;
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-style: dotted;
+  border-color: blue;
+}
+
+.allchatgroupbox {
+  width: 100%;
+  height: 100%;
+  
+}
+
+.right-block {
+  flex: 1;
+
+}
+.top-block {
+  flex: 1;
+  
+}
+#comment-block{
+  width: 100%;
+  height: 100%;
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 500px;
+}
+
+/* #middle-chatroom-block{
+  
+} */

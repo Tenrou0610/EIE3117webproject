@@ -1,5 +1,10 @@
 <?php
 session_start();
+include"connect.php";
+$SESSIONID = $_SESSION['userid'];
+$userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
+$user = mysqli_fetch_assoc($userResult);
+$profileimage = $user['profileimage']; 
 //if not login, direct to login page
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
@@ -14,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $title = mysqli_real_escape_string($connection, $_POST['title']);
         $description = mysqli_real_escape_string($connection, $_POST['description']);
-        $sql = "INSERT INTO `chatgroup` (title, description) VALUES ('$title', '$description')";
+        $sql = "INSERT INTO `chatgroup` (title, description, poster_id) VALUES ('$title', '$description','$SESSIONID')";
         $result = mysqli_query($connection, $sql);
         if ($result) {
             // Display a success alert indicating successful create
@@ -52,19 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a class="navbar-brand fs-2" href="index.php">Pforum</a>
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link fs-2 px-3 active" aria-current="page" href="#">My ChatGroup</a>
+                    <a class="nav-link fs-2 px-3 active" aria-current="page" href="mychatgroup.php">My ChatGroup</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-2 px-3 active" aria-current="page" href="createpage.php">Create ChatGroup</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link fs-2 px-3 active" aria-current="page" href="#">List of ChatGroup</a>
+                    <a class="nav-link fs-2 px-3 active" aria-current="page" href="index.php">List of ChatGroup</a>
                 </li>
             </ul>
         </div>
 
         <div class="d-inline-flex">
             <div><span class="navbar-text fs-2  px-3 text-primary"><?php echo $_COOKIE['nickname_cookie']; ?></span></div>
+            <div>
+                <img src="<?php echo $profileimage; ?>" class="img-thumbnail img-fluid" width="50" height="50" />
+            </div>
             <div>
                 <form class="fs-2 px-3" action="logout.php" method="POST">
                     <button type="submit" class="btn btn-primary">Logout</button>
@@ -74,16 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- create chatgroup form -->
     <div class="container">
-        <h1>Create New ChatRoom！</h1>
+        <h1>Create New ChatRoom!</h1>
         <form action="createpage.php" method="post">
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label fs-3">Title</label>
+                <label for="title" class="form-label fs-3">Title</label>
                 <input type="title" class="form-control" id="title" name="title">
                 <div id="titletext" class="form-text">Decide the title that you want to discuss</div>
             </div>
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label  fs-3">Description</label>
-                <input type="text" class="form-control" id="description" name="description">
+                <p><label for="description" class="form-label  fs-3">Description</label></p>
+                <textarea id="description" name="description" rows="10" cols="138"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

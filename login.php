@@ -39,9 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!empty($_POST['rememberme'])){
             setcookie('username_cookie', $row['username'], time() + 3600, '/');
             setcookie('password_cookie', $row['password'], time() + 3600, '/');
-            setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/');
             } 
-            $_SESSION['username'] = $row['nickname'];
+            setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/');
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['id'] = $row['id'];
             header("Location: index.php");
             exit();
         
