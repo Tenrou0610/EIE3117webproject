@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'connect.php';
-$SESSIONID = $_SESSION['userid'];
+$SESSIONID = $_COOKIE['userid_cookie'];
 $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
 $user = mysqli_fetch_assoc($userResult);
 $profileimage = $user['profileimage'];
@@ -58,27 +58,29 @@ $profileimage = $user['profileimage'];
         </div>
     </nav>
 
-    <div>
-        <?php
-        $mychatgroup_query = "SELECT * FROM groupmember WHERE user_id = '$SESSIONID'";
-        $mychatgroup_query_result = mysqli_query($connection, $mychatgroup_query);
+    <?php
+    $mychatgroup_query = "SELECT * FROM groupmember WHERE user_id = '$SESSIONID'";
+    $mychatgroup_query_result = mysqli_query($connection, $mychatgroup_query);
 
-        $mychatgroups = []; // Initialize an empty array
+    $mychatgroups = [];
+    $groupnumbercounter = 1; 
 
-        while ($row = mysqli_fetch_assoc($mychatgroup_query_result)) {
-            $mychatgroups[] = $row;
-        }
+    while ($row = mysqli_fetch_assoc($mychatgroup_query_result)) {
+        $mychatgroups[] = $row;
+    }
 
-        foreach ($mychatgroups as $mychatgroup) {
-        ?>
-            <div class="mychatgroup">
-                <h3><?php echo $mychatgroup['title']; ?></h3>
-                <p><?php echo $mychatgroup['description']; ?></p>
+    foreach ($mychatgroups as $mychatgroup) {
+    ?>
+        <div class="mychatgroup">
+            <h3>Joined chat group <?php echo $groupnumbercounter++; ?></h3>
+            <div class="groupinformation">
+                <p>Title: <?php echo $mychatgroup['title']; ?></p>
+                <p>Description: <?php echo $mychatgroup['description']; ?></p>
             </div>
-        <?php
-        }
-        ?>
-    </div>
+        </div>
+    <?php
+    }
+    ?>
 </body>
 
 </html>

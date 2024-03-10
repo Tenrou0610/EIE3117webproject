@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'connect.php';
+date_default_timezone_set('Asia/Singapore');
+
 // if the send chat button is pressed, the data should be insert into the table message
 if (isset($_GET['sendchat'])) {
     $content = $_GET['content'];

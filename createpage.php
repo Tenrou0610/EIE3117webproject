@@ -1,7 +1,7 @@
 <?php
 session_start();
-include"connect.php";
-$SESSIONID = $_SESSION['userid'];
+include "connect.php";
+$SESSIONID = $_COOKIE['userid_cookie'];
 $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
 $user = mysqli_fetch_assoc($userResult);
 $profileimage = $user['profileimage']; 

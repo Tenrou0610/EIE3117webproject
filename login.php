@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             setcookie('password_cookie', $row['password'], time() + 3600, '/');
             } 
             setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/');
+            setcookie('userid_cookie', $row['id'], time() + 3600, '/');
             $_SESSION['username'] = $row['username'];
             $_SESSION['id'] = $row['id'];
             header("Location: index.php");

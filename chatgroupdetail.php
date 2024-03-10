@@ -5,7 +5,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: login.php");
 }
 include 'connect.php';
-$SESSIONID = $_SESSION['userid'];
+$SESSIONID = $_COOKIE['userid_cookie'];
 $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
 $user = mysqli_fetch_assoc($userResult);
 $profileimage = $user['profileimage'];
@@ -19,7 +19,7 @@ if (isset($_SESSION['comment_message'])) {
            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
            </div>';
     unset($_SESSION['comment_message']);
-  }
+}
 
 if (isset($_GET['join'])) {
     setcookie('title_cookie', $_GET['title'], time() + 86400, '/');
@@ -28,7 +28,7 @@ if (isset($_GET['join'])) {
     $title = $_GET['title'];
     $description = $_GET['description'];
     $nickname = $_COOKIE['nickname_cookie'];
-    $user_id =  $_SESSION['id'];
+    $user_id =  $_COOKIE['userid_cookie'];
 
     // Check if the user has already joined the group
     $check_query = "SELECT * FROM groupmember WHERE group_id = '$group_id' AND user_id = '$user_id'";
@@ -129,6 +129,25 @@ if (isset($_GET['join'])) {
 
     </nav>
 
+    <div class="container mb-3">
+        <h4>Joined User in the Chat Group</h4>
+        <?php
+        $joined_users_query = "SELECT * FROM groupmember WHERE group_id = '$group_id'";
+        $joined_users_query_result = mysqli_query($connection, $joined_users_query);
+
+        if (mysqli_num_rows($joined_users_query_result) > 0) {
+            while ($joined_user = mysqli_fetch_assoc($joined_users_query_result)) {
+                echo $joined_user['nickname'] . '<br />';
+            }
+        }
+
+
+
+
+        ?>
+
+
+    </div>
 
 
     <div class="container">
@@ -137,27 +156,25 @@ if (isset($_GET['join'])) {
         </div>
 
 
-
         <div id="middle-chatroom-block">
             <?php
-            
-            // $comment_query = "SELECT * FROM message WHERE group_id = '$group_id'";
-            // $comment_result = mysqli_query($connection, $comment_query);
+            $comment_query = "SELECT * FROM message WHERE group_id = '$group_id'";
+            $comment_result = mysqli_query($connection, $comment_query);
 
-            // if ($comment_result && mysqli_num_rows($comment_result) > 0) {
-            //     while ($comment = mysqli_fetch_assoc($comment_result)) {
-            //         echo '<div class="comment">';
-            //         echo '<h4>' . $comment['name'] . '</h4>';
-            //         echo '<p>' . $comment['date'] . '</p>';
-            //         echo '<p>' . $comment['comment'] . '</p>';
-            //         echo '</div>';
-            //     }
-            // } else {
-            //     echo 'No comments found.';
-            // }
+            if (mysqli_num_rows($comment_result) > 0) {
+                while ($comment = mysqli_fetch_assoc($comment_result)) {
+                    echo '<div class="comment">';
+                    echo '<p><label>User:</label> ' . $comment['nickname'] . '</p>';
+                    echo '<p><label>Posted at:</label> ' . $comment['posted_at'] . '</p>';
+                    echo '<p><label>Message:</label> ' . $comment['content'] . '</p>';
+                    echo '</div>';
+                    echo '<hr>';
+                }
+            } else {
+                echo 'No comments found.';
+            }
             ?>
         </div>
-
 
 
 
@@ -171,11 +188,10 @@ if (isset($_GET['join'])) {
                 <input type='hidden' name='group_id' value='<?php echo $group_id; ?>'>
                 <input type='hidden' name='session_id' value='<?php echo $SESSIONID; ?>'>
                 <button type="submit" name="sendchat" class="btn btn-primary">Send Chat</button>
-                <button type="submit" name="refresh" class="btn btn-primary">Refresh Chat</button>
             </form>
         </div>
 
-
+        <div class="mb-3 "><button type="button" name="refresh" class="btn btn-secondary"><a class="link-dark" href="<?php $_SERVER['PHP_SELF']; ?>">Refresh Chat</a></button></div>
 
         <div>
             <form action="leavegroup.php" method="GET">
