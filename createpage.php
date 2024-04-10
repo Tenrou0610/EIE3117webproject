@@ -8,6 +8,11 @@ $profileimage = $user['profileimage'];
 //if not login, direct to login page
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
+    exit();
+}
+if (!isset($_COOKIE['userid_cookie']) || empty($_COOKIE['userid_cookie'])) {
+    header("Location: login.php");
+    exit(); 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

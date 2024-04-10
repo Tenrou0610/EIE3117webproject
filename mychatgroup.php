@@ -6,6 +6,14 @@ $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $
 $user = mysqli_fetch_assoc($userResult);
 $profileimage = $user['profileimage'];
 
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+if (!isset($_COOKIE['userid_cookie']) || empty($_COOKIE['userid_cookie'])) {
+    header("Location: login.php");
+    exit(); 
+}
 
 ?>
 

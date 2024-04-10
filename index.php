@@ -6,6 +6,10 @@ if (!isset($_SESSION['username'])) {
   header("Location: login.php");
   exit;
 }
+if (!isset($_COOKIE['userid_cookie']) || empty($_COOKIE['userid_cookie'])) {
+  header("Location: login.php");
+  exit(); 
+}
 include 'connect.php';
 $SESSIONID = $_COOKIE['userid_cookie'];
 $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
@@ -95,8 +99,7 @@ if (isset($_SESSION['comment_message'])) {
 
 
   <div class="container">
-    <div class="left-block">
-    </div>
+ 
 
     <div class="middle-block mb-3">
       <div class="allchatgroupbox">
@@ -122,7 +125,7 @@ if (isset($_SESSION['comment_message'])) {
             echo "<input type='hidden' name='group_id' value='$group_id'>";
             echo "<input type='hidden' name='title' value='$title'>";
             echo "<input type='hidden' name='description' value='$description'>";
-            echo '<button type="submit" name="join" class="btn btn-primary">JOIN</button>';
+            echo '<button type="submit" name="join" class="btn btn-primary btn-lg">JOIN</button>';
             echo '</form></td>';
             echo '</tr>';
           }

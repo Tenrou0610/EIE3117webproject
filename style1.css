@@ -7,10 +7,6 @@
 }
 
 
-.left-block {
-  flex: 1;
-  
-}
 
 .middle-block {
   width: 100%;
@@ -30,14 +26,7 @@
   
 }
 
-.right-block {
-  flex: 1;
 
-}
-.top-block {
-  flex: 1;
-  
-}
 #comment-block{
   width: 100%;
   height: 100%;
@@ -49,8 +38,5 @@
   margin-top: 500px;
 }
 
-/* #middle-chatroom-block{
-  
-} */
 
 

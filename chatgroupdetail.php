@@ -3,7 +3,13 @@ session_start();
 //if not login, direct to login page
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
+    exit();
 }
+if (!isset($_COOKIE['userid_cookie']) || empty($_COOKIE['userid_cookie'])) {
+    header("Location: login.php");
+    exit();
+}
+
 include 'connect.php';
 $SESSIONID = $_COOKIE['userid_cookie'];
 $userResult = mysqli_query($connection, "SELECT * FROM registration WHERE id = $SESSIONID");
@@ -129,82 +135,86 @@ if (isset($_GET['join'])) {
 
     </nav>
 
-    <div class="container mb-3">
-        <h4>Joined User in the Chat Group</h4>
-        <?php
-        $joined_users_query = "SELECT * FROM groupmember WHERE group_id = '$group_id'";
-        $joined_users_query_result = mysqli_query($connection, $joined_users_query);
-
-        if (mysqli_num_rows($joined_users_query_result) > 0) {
-            while ($joined_user = mysqli_fetch_assoc($joined_users_query_result)) {
-                echo $joined_user['nickname'] . '<br />';
-            }
-        }
-
-
-
-
-        ?>
-
-
-    </div>
 
 
     <div class="container">
-        <div class="top-block">
-            <h1 class="mb-3">Title: <?php echo $title; ?></h1>
-        </div>
+        <div class="row gx-5 gy-5">
+            <div class="col-12">
+                <h1 class="mb-3">Title: <?php echo $title; ?></h1>
+            </div>
 
+            <div class="col-12   mb-3">
+                <h4>Joined User in the Chat Group</h4>
+                <?php
+                $joined_users_query = "SELECT * FROM groupmember WHERE group_id = '$group_id'";
+                $joined_users_query_result = mysqli_query($connection, $joined_users_query);
 
-        <div id="middle-chatroom-block">
-            <?php
-            $comment_query = "SELECT * FROM message WHERE group_id = '$group_id'";
-            $comment_result = mysqli_query($connection, $comment_query);
-
-            if (mysqli_num_rows($comment_result) > 0) {
-                while ($comment = mysqli_fetch_assoc($comment_result)) {
-                    echo '<div class="comment">';
-                    echo '<p><label>User:</label> ' . $comment['nickname'] . '</p>';
-                    echo '<p><label>Posted at:</label> ' . $comment['posted_at'] . '</p>';
-                    echo '<p><label>Message:</label> ' . $comment['content'] . '</p>';
-                    echo '</div>';
-                    echo '<hr>';
+                if (mysqli_num_rows($joined_users_query_result) > 0) {
+                    while ($joined_user = mysqli_fetch_assoc($joined_users_query_result)) {
+                        echo $joined_user['nickname'] . '<br />';
+                    }
                 }
-            } else {
-                echo 'No comments found.';
-            }
-            ?>
-        </div>
 
 
 
-        <div id="comment-block">
 
-            <form action="comment.php?group_id=<?php echo $group_id; ?>&session_id=<?php echo $SESSIONID; ?>" method="GET">
-                <div class="mb-3">
-                    <p><label for="comment" class="form-label fs-3">Comment</label></p>
-                    <textarea id="comment" name="content" rows="10" cols="100" placeholder="Type your comment here!"></textarea>
-                </div>
-                <input type='hidden' name='group_id' value='<?php echo $group_id; ?>'>
-                <input type='hidden' name='session_id' value='<?php echo $SESSIONID; ?>'>
-                <button type="submit" name="sendchat" class="btn btn-primary">Send Chat</button>
-            </form>
-        </div>
+                ?>
 
-        <div class="mb-3 "><button type="button" name="refresh" class="btn btn-secondary"><a class="link-dark" href="<?php $_SERVER['PHP_SELF']; ?>">Refresh Chat</a></button></div>
 
-        <div>
-            <form action="leavegroup.php" method="GET">
-                <div class="mb-3">
-                    <input type="hidden" name="group_id" value="<?php echo $group_id; ?>">
-                    <input type="hidden" name="session_id" value="<?php echo $SESSIONID; ?>">
-                    <button type="submit" name="leavegroup" class="btn btn-primary">Leave Group</button>
-                </div>
-            </form>
+            </div>
+
+            
+            <div class="col-12"   id="middle-chatroom-block">
+                <?php
+                $comment_query = "SELECT * FROM message WHERE group_id = '$group_id'";
+                $comment_result = mysqli_query($connection, $comment_query);
+                
+                echo"ChatGroup's Comment";
+                echo"<hr>";
+                if (mysqli_num_rows($comment_result) > 0) {
+                    while ($comment = mysqli_fetch_assoc($comment_result)) {
+                        echo '<div class="comment">';
+                        echo '<p><label>User:</label> ' . $comment['nickname'] . '</p>';
+                        echo '<p><label>Posted at:</label> ' . $comment['posted_at'] . '</p>';
+                        echo '<p><label>Message:</label> ' . $comment['content'] . '</p>';
+                        echo '</div>';
+                        echo '<hr>';
+                    }
+                } else {
+                    echo 'No comments found.';
+                }
+                ?>
+            </div>
+
+
+
+            <div class="col" id="comment-block">
+
+                <form action="comment.php?group_id=<?php echo $group_id; ?>&session_id=<?php echo $SESSIONID; ?>" method="GET">
+                    <div class="mb-3">
+                        <p><label for="comment" class="form-label fs-3">Comment</label></p>
+                        <textarea id="comment" name="content" rows="10" cols="100" placeholder="Type your comment here!"></textarea>
+                    </div>
+                    <input type='hidden' name='group_id' value='<?php echo $group_id; ?>'>
+                    <input type='hidden' name='session_id' value='<?php echo $SESSIONID; ?>'>
+                    <button type="submit" name="sendchat" class="btn btn-primary">Send Chat</button>
+                </form>
+            </div>
+
+            <div class="mb-3 "><button type="button" name="refresh" class="btn btn-secondary"><a class="link-dark" href="<?php $_SERVER['PHP_SELF']; ?>">Refresh Chat</a></button></div>
+
+            <div>
+                <form action="leavegroup.php" method="GET">
+                    <div class="mb-3">
+                        <input type="hidden" name="group_id" value="<?php echo $group_id; ?>">
+                        <input type="hidden" name="session_id" value="<?php echo $SESSIONID; ?>">
+                        <button type="submit" name="leavegroup" class="btn btn-primary">Leave Group</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
-
-
 </body>
 
 </html>
