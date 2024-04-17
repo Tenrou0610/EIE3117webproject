@@ -5,12 +5,12 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'connect.php';
     include 'function.php';
-    $username = mysqli_real_escape_string($connection, $_POST['username']);
-    $password = mysqli_real_escape_string($connection, $_POST['password']);
-    $confirmpassword = mysqli_real_escape_string($connection, $_POST['confirmpassword']);
-    $nickname = mysqli_real_escape_string($connection, $_POST['nickname']);
-    $email = mysqli_real_escape_string($connection, $_POST['email']);
 
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $confirmpassword = $_POST['confirmpassword'];
+    $nickname = $_POST['nickname'];
+    $email = $_POST['email'];
 
 
     //profile image part
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $profileimage_error = $_FILES['profileimage']['error'];
 
         if ($profileimage_error === 0) {
-            if ($profileimage_size > 125000) {
+            if ($profileimage_size > 20 * 1024 * 1024 * 8) {
                 echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>Warning!</strong> Your file size is too large! Please try a new one!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" onclick="history.back()">Go Back</button>
                 </div>';
                 exit;
             }
@@ -56,22 +56,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>';
             exit;
         }
-    } 
+    }
 
 
 
     // Check if the login ID already exists
-    $check_loginid_existence_query = "SELECT username FROM `registration` WHERE username = '$username'";
-    $check_loginid_existence_result = mysqli_query($connection, $check_loginid_existence_query);
+    $check_loginid_existence_query = "SELECT username FROM `registration` WHERE username = ?";
+    $check_loginid_existence_stmt = mysqli_prepare($connection, $check_loginid_existence_query);
+    mysqli_stmt_bind_param($check_loginid_existence_stmt, "s", $username);
+    mysqli_stmt_execute($check_loginid_existence_stmt);
+    $check_loginid_existence_result = mysqli_stmt_get_result($check_loginid_existence_stmt);
+
     if (mysqli_num_rows($check_loginid_existence_result) > 0) {
         echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Warning!</strong> This username is already in use. Please choose a different one!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>';
     } else {
-        // Check if the email already exists
-        $check_email_existence_query = "SELECT email FROM `registration` WHERE email = '$email'";
-        $check_email_existence_result = mysqli_query($connection, $check_email_existence_query);
+        $check_email_existence_query = "SELECT email FROM `registration` WHERE email = ?";
+        $check_email_existence_stmt = mysqli_prepare($connection, $check_email_existence_query);
+        mysqli_stmt_bind_param($check_email_existence_stmt, "s", $email);
+        mysqli_stmt_execute($check_email_existence_stmt);
+        $check_email_existence_result = mysqli_stmt_get_result($check_email_existence_stmt);
+
         if (mysqli_num_rows($check_email_existence_result) > 0) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <strong>Warning!</strong> This email is already in use. Please choose a different one!
@@ -79,18 +86,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>';
         } else {
             if ($password != $confirmpassword) {
-                // Display a warning alert if passwords do not match
                 echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Warning!</strong> Passwords do not match! Please try again!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>Warning!</strong> Passwords do not match! Please try again!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>';
             } else {
-                // Hash the password before storing it in the database
                 $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
 
-                // Insert the user data into the database
-                $insert_user_query = "INSERT INTO `registration` (username, password, nickname, email, profileimage) VALUES ('$username', '$hashedpassword', '$nickname', '$email', '$profileimage_upload_path')";
-                mysqli_query($connection, $insert_user_query);
+                $insert_user_query = "INSERT INTO `registration` (username, password, nickname, email, profileimage) VALUES (?, ?, ?, ?, ?)";
+                $insert_user_stmt = mysqli_prepare($connection, $insert_user_query);
+                mysqli_stmt_bind_param($insert_user_stmt, "sssss", $username, $hashedpassword, $nickname, $email, $profileimage_upload_path);
+                mysqli_stmt_execute($insert_user_stmt);
 
                 // Inform the user about successful registration
                 echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
