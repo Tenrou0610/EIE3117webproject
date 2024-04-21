@@ -55,9 +55,9 @@ if (!isset($_COOKIE['userid_cookie']) || empty($_COOKIE['userid_cookie'])) {
             <div>
                 <span class="navbar-text fs-2  px-3 text-primary"> Welcome,<?php echo $_COOKIE['nickname_cookie']; ?></span>
             </div>
-            <div>
-                <img src="<?php echo $profileimage; ?>" class="img-thumbnail img-fluid" width="50" height="50" />
-            </div>
+            <div class="image-container">
+        <img src="<?php echo $profileimage; ?>" class="img-thumbnail img-fluid"/>
+      	    </div>
             <div>
                 <form class="fs-2 px-3" action="logout.php" method="POST">
                     <button type="submit" class="btn btn-primary">Logout</button>

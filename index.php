@@ -81,8 +81,8 @@ if (isset($_SESSION['comment_message'])) {
       <div>
         <span class="navbar-text fs-2  px-3 text-primary"> Welcome,<?php echo $_COOKIE['nickname_cookie']; ?></span>
       </div>
-      <div>
-        <img src="<?php echo $profileimage; ?>" class="img-thumbnail img-fluid" width="50" height="50" />
+      <div class="image-container">
+        <img src="<?php echo $profileimage; ?>" class="img-thumbnail img-fluid"/>
       </div>
       <div>
         <form class="fs-2 px-3" action="logout.php" method="POST">

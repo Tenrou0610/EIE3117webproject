@@ -37,6 +37,10 @@
   text-align: center;
   margin-top: 500px;
 }
-
+.image-container {
+  width: 20vh;
+  height: auto;
+  margin: 0 auto;
+}
 
 
