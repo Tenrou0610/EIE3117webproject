@@ -1,4 +1,6 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+require_once 'config.php';
 session_start();
 include 'connect.php';
 //if not login, direct to login page

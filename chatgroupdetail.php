@@ -1,4 +1,6 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+require_once 'config.php';
 session_start();
 //if not login, direct to login page
 if (!isset($_SESSION['username'])) {
@@ -28,8 +30,8 @@ if (isset($_SESSION['comment_message'])) {
 }
 
 if (isset($_GET['join'])) {
-    setcookie('title_cookie', $_GET['title'], time() + 86400, '/');
-    setcookie('group_id_cookie', $_GET['group_id'], time() + 86400, '/');
+    setcookie('title_cookie', $_GET['title'], time() + 86400, '/',NULL, NULL, TRUE);
+    setcookie('group_id_cookie', $_GET['group_id'], time() + 86400, '/',NULL, NULL, TRUE);
     $group_id = $_GET['group_id'];
     $title = $_GET['title'];
     $description = $_GET['description'];

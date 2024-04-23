@@ -1,4 +1,6 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+require_once 'config.php';
 session_start();
 include 'connect.php';
 date_default_timezone_set('Asia/Singapore');

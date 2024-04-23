@@ -1,8 +1,19 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+require_once 'config.php';
 session_start();
 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 // When the submit button is pressed in the registration page
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        // CSRF token validation failed, handle the error (e.g., log the incident, show an error message, etc.)
+        // It's important to prevent the login process when the token is invalid.
+        // You can exit the script or redirect the user to an error page.
+        exit('Invalid CSRF token');
+    }
     include 'connect.php';
     include 'function.php';
 

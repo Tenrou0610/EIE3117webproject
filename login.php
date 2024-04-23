@@ -1,5 +1,14 @@
 <?php
+ini_set("session.cookie_httponly", 1);
+require_once 'config.php';
+
+
+
 session_start();
+
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Check if the login cookie is set or not, if the cookie is set, use them to login
 if (isset($_COOKIE['username_cookie']) && isset($_COOKIE['password_cookie'])) {
@@ -20,6 +29,13 @@ if (isset($_COOKIE['username_cookie']) && isset($_COOKIE['password_cookie'])) {
 
 // When the submit button is pressed on the registration page
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Validate CSRF token
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        // CSRF token validation failed, handle the error (e.g., log the incident, show an error message, etc.)
+        // It's important to prevent the login process when the token is invalid.
+        // You can exit the script or redirect the user to an error page.
+        exit('Invalid CSRF token');
+    }
     include 'connect.php';
     include 'function.php';
     $username = $_POST['username'];
@@ -40,11 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (password_verify($password, $current_row_password)) {
             // When the user presses remember me, the login status will be stored in a cookie
             if (!empty($_POST['rememberme'])) {
-                setcookie('username_cookie', $row['username'], time() + 3600, '/');
-                setcookie('password_cookie', $row['password'], time() + 3600, '/');
+                setcookie('username_cookie', $row['username'], time() + 3600, '/', NULL, NULL, TRUE);
+                setcookie('password_cookie', $row['password'], time() + 3600, '/', NULL, NULL, TRUE);
             }
-            setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/');
-            setcookie('userid_cookie', $row['id'], time() + 3600, '/');
+            setcookie('nickname_cookie', $row['nickname'], time() + 3600, '/',NULL, NULL, TRUE);
+            setcookie('userid_cookie', $row['id'], time() + 3600, '/',NULL, NULL, TRUE);
             $_SESSION['username'] = $row['username'];
             $_SESSION['id'] = $row['id'];
             header("Location: index.php");
@@ -83,7 +99,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <h1 class="text-center fs-1 text-info ">LOGIN</h1>
     <div class="container mt-5">
+
         <form action="login.php" method="post">
+
+            <?php
+            // Generate and store the CSRF token in the session
+
+            if (!isset($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+            $csrfToken = $_SESSION['csrf_token'];
+            ?>
+
+            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
             <div class="mb-3 text-primary fs-3">
                 <label for="loginid" class="form-label">Loginid</label>
                 <input type="text" value="<?php if (isset($_COOKIE['username_cookie'])) {
